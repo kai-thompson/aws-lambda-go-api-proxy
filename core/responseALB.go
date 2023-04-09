@@ -102,10 +102,17 @@ func (r *ProxyResponseWriterALB) GetProxyResponse() (events.ALBTargetGroupRespon
 		isBase64 = true
 	}
 
+	proxyHeaders := make(map[string]string)
+
+	for h := range r.headers {
+		proxyHeaders[h] = r.headers.Get(h)
+	}
+
 	return events.ALBTargetGroupResponse{
 		StatusCode:        r.status,
 		StatusDescription: http.StatusText(r.status),
 		MultiValueHeaders: http.Header(r.headers),
+		Headers: 		   proxyHeaders,
 		Body:              output,
 		IsBase64Encoded:   isBase64,
 	}, nil
